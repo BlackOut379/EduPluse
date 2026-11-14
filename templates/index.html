@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EduPluse | Academic Intelligence</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#about">About</a>
+            <a href="#portals">Portals</a>
+        </div>
+
+        <a href="#portals" class="nav-button">Get Started</a>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="tag">ACADEMIC INTELLIGENCE PLATFORM</div>
+
+                <h1>
+                    Your performance.<br>
+                    <span>Your potential.</span><br>
+                    One platform.
+                </h1>
+
+                <p>
+                    Understand academic progress, identify learning gaps,
+                    and make better decisions with intelligent performance insights.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="#portals" class="primary-button">Explore Platform →</a>
+                    <a href="#features" class="secondary-button">Discover Features</a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="visual-card">
+                    <div class="visual-top">
+                        <span>Performance Overview</span>
+                        <span class="live-dot">● LIVE</span>
+                    </div>
+
+                    <div class="score">
+                        <h2>86.4%</h2>
+                        <span>Academic Progress</span>
+                    </div>
+
+                    <div class="progress">
+                        <div></div>
+                    </div>
+
+                    <div class="visual-stats">
+                        <div>
+                            <h3>92%</h3>
+                            <p>Attendance</p>
+                        </div>
+                        <div>
+                            <h3>84%</h3>
+                            <p>Assessments</p>
+                        </div>
+                    </div>
+
+                    <div class="insight">
+                        <span>✦</span>
+                        Performance insights help identify areas for improvement.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="section-heading">
+                <span>WHAT MAKES EDUPLUSE DIFFERENT</span>
+                <h2>More than just marks.</h2>
+                <p>Turn academic data into meaningful insights.</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span>01</span>
+                    <h3>Performance Intelligence</h3>
+                    <p>Track academic trends and understand progress across subjects.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span>02</span>
+                    <h3>Concept Understanding</h3>
+                    <p>Identify difficult concepts through assessment performance.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span>03</span>
+                    <h3>Academic Risk Insights</h3>
+                    <p>Recognize students who may need additional academic support.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="portals" id="portals">
+            <div class="section-heading">
+                <span>YOUR LEARNING SPACE</span>
+                <h2>One platform. Two perspectives.</h2>
+            </div>
+
+            <div class="portal-grid">
+                <div class="portal-card">
+                    <h3>Teacher Portal</h3>
+                    <p>Manage classes, publish assessments, monitor progress, and identify learning gaps.</p>
+                    <a href="{{ url_for('teacher_login') }}">Teacher access →</a>
+                </div>
+
+                <div class="portal-card">
+                    <h3>Student Portal</h3>
+                    <p>View academic progress, attempt assessments, and understand your strengths.</p>
+                    <a href="{{ url_for('student_login') }}">Student access →</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="logo">Edu<span>Pluse</span></div>
+        <p>Understand progress. Improve outcomes.</p>
+        <p>© 2026 EduPluse</p>
+    </footer>
+</body>
+</html>

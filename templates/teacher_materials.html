@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Materials | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">TEACHER MENU</p>
+
+        <a href="{{ url_for('teacher_dashboard') }}"
+           class="nav-link active">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('teacher_subjects') }}"
+           class="nav-link">
+            My Subjects & Syllabus
+        </a>
+
+        <a href="{{ url_for('teacher_attendance') }}"
+           class="nav-link">
+            Attendance Management
+        </a>
+
+        <a href="{{ url_for('teacher_marks') }}"
+           class="nav-link">
+            Internal Marks
+        </a>
+
+        <a href="{{ url_for('teacher_materials') }}"
+           class="nav-link">
+            Learning Materials
+        </a>
+
+        <a href="{{ url_for('teacher_assessments') }}"
+           class="nav-link">
+            Assessments
+        </a>
+
+        <a href="{{ url_for('teacher_class_analysis') }}"
+           class="nav-link">
+            Class Analysis
+        </a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}"
+               class="nav-link">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+
+        <header class="dashboard-header">
+
+            <div>
+                <p class="welcome-label">TEACHER WORKSPACE</p>
+                <h1>Learning Materials</h1>
+                <p class="dashboard-subtitle">
+                    Upload weekly teaching materials for your students.
+                </p>
+            </div>
+
+            <div class="profile-avatar">
+                {{ name[0].upper() }}
+            </div>
+
+        </header>
+
+
+        <!-- Upload Section -->
+        <section class="dashboard-card">
+
+            <h2>Upload New Material</h2>
+
+            <p>
+                Upload PDF, PPTX, DOCX or TXT files.
+                Maximum file size: 20 MB.
+            </p>
+
+            <form method="POST"
+                  enctype="multipart/form-data">
+
+                <div class="form-group">
+                    <label for="title">Material Title</label>
+
+                    <input type="text"
+                           id="title"
+                           name="title"
+                           placeholder="Example: Introduction to Python"
+                           required>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="class_id">Select Class</label>
+
+                    <select id="class_id"
+                            name="class_id"
+                            required>
+
+                        <option value="">Choose Class</option>
+
+                        {% for assignment in assignments %}
+                            <option value="{{ assignment.class_id }}">
+                                {{ assignment.class_name }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="subject_id">Select Subject</label>
+
+                    <select id="subject_id"
+                            name="subject_id"
+                            required>
+
+                        <option value="">Choose Subject</option>
+
+                        {% for assignment in assignments %}
+                            <option value="{{ assignment.subject_id }}">
+                                {{ assignment.subject_name }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="material_file">Choose File</label>
+
+                    <input type="file"
+                           id="material_file"
+                           name="material_file"
+                           accept=".pdf,.pptx,.docx,.txt"
+                           required>
+                </div>
+
+
+                <button type="submit">
+                    Upload Material
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- Uploaded Materials -->
+        <section class="dashboard-card">
+
+            <h2>Previously Uploaded Materials</h2>
+
+            {% if materials %}
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>File</th>
+                                <th>Uploaded On</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for material in materials %}
+
+                                <tr>
+                                    <td>{{ material.title }}</td>
+
+                                    <td>{{ material.class_name }}</td>
+
+                                    <td>{{ material.subject_name }}</td>
+
+                                    <td>{{ material.file_name }}</td>
+
+                                    <td>{{ material.created_at }}</td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <p>No learning materials uploaded yet.</p>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

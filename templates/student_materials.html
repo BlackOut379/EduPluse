@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Learning Materials | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .materials-page {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            min-width: 0;
+            color: #0f172a;
+        }
+
+        .materials-page * {
+            box-sizing: border-box;
+        }
+
+        .materials-page .page-intro {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 7px;
+        }
+
+        .materials-page .materials-section {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .materials-page .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .materials-page .section-heading h2 {
+            margin: 0;
+            font-size: 19px;
+            color: #0f172a;
+        }
+
+        .materials-page .section-heading p {
+            color: #64748b;
+            font-size: 12px;
+            margin: 5px 0 0;
+        }
+
+        .materials-page .material-list {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .materials-page .material-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 17px;
+            border: 1px solid #e2e8f0;
+            border-radius: 11px;
+            background: #ffffff;
+            min-width: 0;
+        }
+
+        .materials-page .material-icon {
+            width: 43px;
+            height: 43px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 20px;
+        }
+
+        .materials-page .material-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .materials-page .material-details h3 {
+            margin: 0 0 7px;
+            font-size: 15px;
+            color: #0f172a;
+            overflow-wrap: anywhere;
+        }
+
+        .materials-page .material-details p {
+            margin: 0 0 10px;
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .materials-page .material-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .materials-page .material-actions a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .materials-page .material-actions a:hover {
+            color: #3730a3;
+            text-decoration: underline;
+        }
+
+        .materials-page .empty-state {
+            padding: 35px 15px;
+            text-align: center;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+        }
+
+        .materials-page .empty-state h3 {
+            font-size: 15px;
+            color: #334155;
+            margin: 0 0 7px;
+        }
+
+        .materials-page .empty-state p {
+            color: #64748b;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .materials-page .dashboard-footer {
+            padding: 17px 0 5px;
+            color: #94a3b8;
+            font-size: 11px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 500px) {
+            .materials-page .materials-section {
+                padding: 15px;
+            }
+
+            .materials-page .material-card {
+                padding: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">STUDENT MENU</p>
+
+        <a href="{{ url_for('student_dashboard') }}"
+           class="nav-link">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('student_subjects') }}"
+           class="nav-link">
+            My Subjects
+        </a>
+
+        <a href="{{ url_for('student_topic_analysis') }}"
+           class="nav-link">
+            Topic-wise Analysis
+        </a>
+
+        <a href="{{ url_for('student_assessments') }}"
+           class="nav-link">
+            Assessments
+        </a>
+
+        <a href="{{ url_for('student_materials') }}"
+           class="nav-link active">
+            Learning Materials
+        </a>
+
+        <a href="{{ url_for('student_attendance') }}"
+           class="nav-link">
+            My Attendance
+        </a>
+
+        <a href="{{ url_for('student_marks') }}"
+           class="nav-link">
+            Internal Marks
+        </a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="dashboard-main materials-page">
+
+        <header class="dashboard-header">
+
+            <div>
+                <p class="welcome-label">STUDENT WORKSPACE</p>
+
+                <h1>Learning Materials</h1>
+
+                <p class="page-intro">
+                    Access study resources uploaded by your teachers.
+                </p>
+            </div>
+
+            <div class="profile-avatar">
+                {{ name[0].upper() if name else 'S' }}
+            </div>
+
+        </header>
+
+
+        <!-- Materials -->
+        <section class="materials-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Available Resources</h2>
+                    <p>
+                        Your subject-wise learning materials
+                    </p>
+                </div>
+            </div>
+
+            <div class="material-list">
+
+                {% if learning_materials %}
+
+                    {% for material in learning_materials %}
+
+                        <div class="material-card">
+
+                            <div class="material-icon">
+                                &#128218;
+                            </div>
+
+                            <div class="material-details">
+
+                                <h3>{{ material.title }}</h3>
+
+                                <p>
+                                    <strong>Subject:</strong>
+                                    {{ material.subject_name }}
+
+                                    {% if material.file_name %}
+                                        <br>
+                                        <strong>File:</strong>
+                                        {{ material.file_name }}
+                                    {% endif %}
+                                </p>
+
+                                <div class="material-actions">
+
+                                    {% if material.file_name and material.file_name.lower().endswith('.pdf') %}
+
+                                        <a href="{{ url_for('view_student_material', material_id=material.id) }}">
+                                            View material
+                                        </a>
+
+                                    {% endif %}
+
+                                    {% if material.file_name %}
+
+                                        <a href="{{ url_for('download_student_material', material_id=material.id) }}">
+                                            Download
+                                        </a>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <h3>No learning materials available</h3>
+
+                        <p>
+                            Your teachers' uploaded study resources
+                            will appear here.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <footer class="dashboard-footer">
+            EduPluse · Learn. Analyse. Improve.
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

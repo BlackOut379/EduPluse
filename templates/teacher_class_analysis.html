@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Class Analysis | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">TEACHER MENU</p>
+
+        <a href="{{ url_for('teacher_dashboard') }}" class="nav-link">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('teacher_subjects') }}" class="nav-link">
+            My Subjects & Syllabus
+        </a>
+
+        <a href="{{ url_for('teacher_attendance') }}" class="nav-link">
+            Attendance Management
+        </a>
+
+        <a href="{{ url_for('teacher_marks') }}" class="nav-link">
+            Internal Marks
+        </a>
+
+        <a href="{{ url_for('teacher_materials') }}" class="nav-link">
+            Learning Materials
+        </a>
+
+        <a href="{{ url_for('teacher_assessments') }}" class="nav-link">
+            Assessments
+        </a>
+
+        <a href="{{ url_for('teacher_class_analysis') }}"
+           class="nav-link active">
+            Class Analysis
+        </a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="dashboard-main class-analysis-page">
+
+        <!-- Header -->
+        <header class="dashboard-header">
+
+            <div>
+                <p class="welcome-label">TEACHER WORKSPACE</p>
+
+                <h1>Class Analysis</h1>
+
+                <p class="class-analysis-intro">
+                    Understand class performance and identify
+                    topics that need additional attention.
+                </p>
+            </div>
+
+            <div class="profile-avatar">
+                {{ name[0].upper() if name else 'T' }}
+            </div>
+
+        </header>
+
+
+        <!-- Class Selector -->
+        <section class="analysis-filter-section">
+
+            <div>
+                <h2>Select Class</h2>
+                <p>Choose a class to explore its academic performance.</p>
+            </div>
+
+            <form method="GET"
+                  action="{{ url_for('teacher_class_analysis') }}"
+                  class="analysis-filter-form">
+
+                <select name="class_id"
+                        onchange="this.form.submit()">
+
+                    <option value="">All Classes</option>
+
+                    {% for class_item in classes %}
+                        <option value="{{ class_item.id }}"
+                            {% if selected_class_id == class_item.id %}
+                                selected
+                            {% endif %}>
+                            {{ class_item.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+            </form>
+
+        </section>
+
+
+        <!-- Class Performance -->
+        <section class="analysis-section">
+
+            <div class="analysis-section-heading">
+                <div>
+                    <h2>Class Performance Overview</h2>
+                    <p>Subject-wise academic statistics.</p>
+                </div>
+            </div>
+
+
+            {% if class_analysis %}
+
+                <div class="class-analysis-grid">
+
+                    {% for item in class_analysis %}
+
+                        {% set attendance_possible =
+                            item.student_count * item.total_lectures %}
+
+                        {% set attendance_percentage =
+                            (item.present_records / attendance_possible * 100)
+                            if attendance_possible > 0 else 0 %}
+
+                        <div class="class-analysis-card">
+
+                            <div class="analysis-card-header">
+
+                                <div>
+                                    <span class="analysis-card-label">
+                                        {{ item.class_name }}
+                                    </span>
+
+                                    <h3>{{ item.subject_name }}</h3>
+                                </div>
+
+                                <div class="analysis-card-icon">
+                                    &#128202;
+                                </div>
+
+                            </div>
+
+
+                            <div class="analysis-stats-grid">
+
+                                <div class="analysis-stat">
+                                    <span>Students</span>
+                                    <strong>{{ item.student_count }}</strong>
+                                </div>
+
+                                <div class="analysis-stat">
+                                    <span>Lectures</span>
+                                    <strong>{{ item.total_lectures }}</strong>
+                                </div>
+
+                                <div class="analysis-stat">
+                                    <span>Assessment Attempts</span>
+                                    <strong>{{ item.total_attempts }}</strong>
+                                </div>
+
+                                <div class="analysis-stat">
+                                    <span>Average Score</span>
+                                    <strong>
+                                        {% if item.average_score is not none %}
+                                            {{ "%.1f"|format(item.average_score) }}
+                                        {% else %}
+                                            --
+                                        {% endif %}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+
+                            <div class="analysis-attendance">
+
+                                <div class="analysis-attendance-heading">
+                                    <span>Attendance</span>
+
+                                    <strong>
+                                        {{ "%.1f"|format(attendance_percentage) }}%
+                                    </strong>
+                                </div>
+
+                                <div class="analysis-progress">
+                                    <div class="analysis-progress-fill"
+                                         data-progress="{{ attendance_percentage }}">
+                                    </div>
+                                </div>
+
+                                <p>
+                                    {{ item.present_records }} present records
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="analysis-empty-state">
+                    <h3>No Class Data Available</h3>
+                    <p>
+                        No academic records are available for this selection yet.
+                    </p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- Topic Analysis -->
+        {% if selected_class_id %}
+
+        <section class="analysis-section">
+
+            <div class="analysis-section-heading">
+                <div>
+                    <h2>Topic-wise Analysis</h2>
+                    <p>
+                        Understand how students performed across
+                        different concepts.
+                    </p>
+                </div>
+            </div>
+
+
+            {% if topic_analysis %}
+
+                <div class="topic-analysis-list">
+
+                    {% for topic in topic_analysis %}
+
+                        <div class="topic-analysis-card">
+
+                            <div class="topic-card-main">
+
+                                <div>
+                                    <span class="topic-subject">
+                                        {{ topic.subject_name }}
+                                    </span>
+
+                                    <h3>{{ topic.topic }}</h3>
+                                </div>
+
+                                <div class="topic-accuracy">
+                                    <strong>
+                                        {{ topic.accuracy }}%
+                                    </strong>
+
+                                    <span>Accuracy</span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="topic-progress">
+                                <div class="topic-progress-fill"
+                                     data-progress="{{ topic.accuracy }}">
+                                </div>
+                            </div>
+
+
+                            <div class="topic-card-footer">
+
+                                <span>
+                                    {{ topic.correct_responses or 0 }}
+                                    / {{ topic.total_responses }}
+                                    correct answers
+                                </span>
+
+                                <span>
+                                    {{ topic.total_attempts }} attempts
+                                </span>
+
+                            </div>
+
+
+                            <div class="topic-status">
+
+                                {% if topic.accuracy < 40 %}
+                                    <span class="topic-status-low">
+                                        Needs Attention
+                                    </span>
+
+                                {% elif topic.accuracy < 70 %}
+                                    <span class="topic-status-medium">
+                                        Needs Revision
+                                    </span>
+
+                                {% else %}
+                                    <span class="topic-status-good">
+                                        Good Understanding
+                                    </span>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="analysis-empty-state">
+                    <h3>No Topic Data Available</h3>
+
+                    <p>
+                        Topic analysis will appear after students
+                        submit assessments containing topic information.
+                    </p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        {% else %}
+
+        <section class="analysis-section">
+
+            <div class="topic-selection-message">
+                <div class="analysis-card-icon">
+                    &#128270;
+                </div>
+
+                <div>
+                    <h3>Explore Topic-wise Performance</h3>
+                    <p>
+                        Select a class above to see which topics
+                        students understand and which topics need revision.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            EduPluse · Learn. Analyse. Improve.
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script>
+    document.querySelectorAll(
+        ".analysis-progress-fill, .topic-progress-fill"
+    ).forEach(bar => {
+
+        const progress = Number(bar.dataset.progress) || 0;
+
+        bar.style.width =
+            Math.min(100, Math.max(0, progress)) + "%";
+
+    });
+</script>
+
+</body>
+</html>

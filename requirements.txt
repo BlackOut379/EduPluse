@@ -1,0 +1,7 @@
+Flask
+Werkzeug
+google-genai
+python-dotenv
+pypdf
+python-pptx
+python-docx

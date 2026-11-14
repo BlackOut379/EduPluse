@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Internal Marks | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-layout">
+
+        <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">STUDENT MENU</p>
+
+        <a href="{{ url_for('student_dashboard') }}"
+           class="nav-link active">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('student_subjects') }}"
+           class="nav-link">
+            My Subjects
+        </a>
+
+        <a href="{{ url_for('student_topic_analysis') }}"
+           class="nav-link">
+            Topic-wise Analysis
+        </a>
+
+        <a href="{{ url_for('student_assessments') }}"
+           class="nav-link">
+            Assessments
+        </a>
+
+        <a href="{{ url_for('student_materials') }}"
+           class="nav-link">
+            Learning Materials
+        </a>
+
+        <a href="{{ url_for('student_attendance') }}"
+           class="nav-link">
+            My Attendance
+        </a>
+
+        <a href="{{ url_for('student_marks') }}"
+           class="nav-link">
+            Internal Marks
+        </a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+
+            <!-- Header -->
+            <header class="dashboard-header">
+
+                <div>
+                    <p class="welcome-label">ACADEMIC RECORDS</p>
+
+                    <h1>Internal Marks</h1>
+
+                    <p class="dashboard-subtitle">
+                        View your subject-wise examination results.
+                    </p>
+                </div>
+
+                <div class="profile-avatar">
+                    {{ name[0].upper() if name else 'S' }}
+                </div>
+
+            </header>
+
+
+            <!-- Marks Summary -->
+            <section class="stats-grid marks-summary">
+
+                <div class="stat-card">
+                    <p>Total Examinations</p>
+
+                    <h2>{{ marks|length }}</h2>
+
+                    <span>Recorded examinations</span>
+                </div>
+
+                <div class="stat-card">
+                    <p>Subjects Evaluated</p>
+
+                    <h2>
+                        {{ marks|map(attribute='subject_name')|unique|list|length }}
+                    </h2>
+
+                    <span>Subjects with recorded marks</span>
+                </div>
+
+            </section>
+
+
+            <!-- Examination Records -->
+            <section class="dashboard-panel">
+
+                <div class="panel-heading">
+                    <h2>Examination Results</h2>
+                    <span>YOUR MARKS</span>
+                </div>
+
+
+                {% if marks %}
+
+                    <div class="marks-results">
+
+                        {% for mark in marks %}
+
+                            {% set percentage = (
+                                (mark.score / mark.maximum_score * 100)
+                                if mark.maximum_score and mark.maximum_score > 0
+                                else 0
+                            ) %}
+
+
+                            <!-- Individual Examination Card -->
+                            <div class="mark-card">
+
+                                <div class="mark-card-header">
+
+                                    <h2>{{ mark.subject_name }}</h2>
+
+                                    <span class="mark-type">
+                                        {{ mark.record_type }}
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Marks Obtained -->
+                                <div class="mark-score">
+
+                                    <h3>{{ mark.score }}</h3>
+
+                                    <span>
+                                        / {{ mark.maximum_score }}
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Percentage -->
+                                <p class="mark-percentage">
+
+                                    Percentage:
+
+                                    {% if mark.maximum_score and mark.maximum_score > 0 %}
+
+                                        {{ "%.1f"|format(percentage) }}%
+
+                                    {% else %}
+
+                                        Not available
+
+                                    {% endif %}
+
+                                </p>
+
+
+                                <!-- Progress Bar -->
+                                <div class="mark-progress-track">
+
+                                    <div
+                                        class="mark-progress-fill"
+                                        data-progress="{{ [percentage, 100]|min }}">
+                                    </div>
+
+                                </div>
+
+
+                                <!-- Recorded Date -->
+                                <p class="mark-date">
+                                    Recorded: {{ mark.recorded_at }}
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                {% else %}
+
+                    <!-- Empty State -->
+                    <div class="marks-empty-state">
+
+                        <h3>No examination records yet</h3>
+
+                        <p>
+                            Your examination marks will appear here
+                            after your teachers save them.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- Footer -->
+            <footer class="dashboard-footer">
+                EduPluse · Learn. Analyse. Improve.
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <!-- Progress Bar Script -->
+    <script>
+
+        document.querySelectorAll(".mark-progress-fill").forEach(bar => {
+
+            const progress = Number(bar.dataset.progress);
+
+            if (Number.isFinite(progress)) {
+                bar.style.width = `${progress}%`;
+            }
+
+        });
+
+    </script>
+
+</body>
+</html>

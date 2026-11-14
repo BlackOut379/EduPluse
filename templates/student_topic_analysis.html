@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Topic Analysis | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">STUDENT MENU</p>
+
+        <a href="{{ url_for('student_dashboard') }}"
+           class="nav-link active">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('student_subjects') }}"
+           class="nav-link">
+            My Subjects
+        </a>
+
+        <a href="{{ url_for('student_topic_analysis') }}"
+           class="nav-link">
+            Topic-wise Analysis
+        </a>
+
+        <a href="{{ url_for('student_assessments') }}"
+           class="nav-link">
+            Assessments
+        </a>
+
+        <a href="{{ url_for('student_materials') }}"
+           class="nav-link">
+            Learning Materials
+        </a>
+
+        <a href="{{ url_for('student_attendance') }}"
+           class="nav-link">
+            My Attendance
+        </a>
+
+        <a href="{{ url_for('student_marks') }}"
+           class="nav-link">
+            Internal Marks
+        </a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="dashboard-main topic-page">
+
+        <!-- Header -->
+        <header class="dashboard-header">
+
+            <div>
+                <p class="welcome-label">ACADEMIC ANALYTICS</p>
+
+                <h1>Topic Analysis</h1>
+
+                <p class="page-description">
+                    Understand your performance across individual topics
+                    and identify where you need more practice.
+                </p>
+            </div>
+
+            <div class="profile-avatar">
+                {{ name[0].upper() if name else 'S' }}
+            </div>
+
+        </header>
+
+
+        <!-- Overall Performance -->
+        <section>
+
+            <div class="section-heading">
+                <div>
+                    <h2>Overall Performance</h2>
+                    <p>Your assessment performance across topics</p>
+                </div>
+            </div>
+
+            <div class="topic-stats">
+
+                <div class="topic-stat">
+                    <p>Topics Analysed</p>
+                    <h2>{{ topic_analysis|length }}</h2>
+                    <span>Topics with assessment data</span>
+                </div>
+
+                <div class="topic-stat">
+                    <p>Questions Attempted</p>
+                    <h2>{{ total_questions_attempted }}</h2>
+                    <span>Across completed assessments</span>
+                </div>
+
+                <div class="topic-stat">
+                    <p>Overall Accuracy</p>
+                    <h2>{{ overall_accuracy|round(1) }}%</h2>
+                    <span>Correct answers out of attempted questions</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Performance Insights -->
+        <section>
+
+            <div class="section-heading">
+                <div>
+                    <h2>Performance Insights</h2>
+                    <p>Your strongest and weakest topic areas</p>
+                </div>
+            </div>
+
+            <div class="topic-category-grid">
+
+                <div class="topic-category">
+                    <h3>Strong Areas</h3>
+
+                    {% if strong_topics %}
+
+                        {% for topic in strong_topics %}
+                            <div class="topic-insight-item">
+                                <strong>{{ topic.concept }}</strong>
+                                <span>{{ topic.accuracy|round(1) }}% accuracy</span>
+                            </div>
+                        {% endfor %}
+
+                    {% else %}
+
+                        <p>
+                            Complete more assessments to identify
+                            your strongest topics.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="topic-category">
+                    <h3>Areas to Improve</h3>
+
+                    {% if weak_topics %}
+
+                        {% for topic in weak_topics %}
+                            <div class="topic-insight-item">
+                                <strong>{{ topic.concept }}</strong>
+                                <span>{{ topic.accuracy|round(1) }}% accuracy</span>
+                            </div>
+                        {% endfor %}
+
+                    {% else %}
+
+                        <p>
+                            Complete more assessments to identify
+                            topics that need additional practice.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Detailed Topic Performance -->
+        <section>
+
+            <div class="section-heading">
+                <div>
+                    <h2>Detailed Topic Performance</h2>
+                    <p>Compare your results topic by topic</p>
+                </div>
+            </div>
+
+            {% if topic_analysis %}
+
+                <div class="topic-table-wrapper">
+
+                    <table class="topic-table">
+
+                        <thead>
+                            <tr>
+                                <th>Topic</th>
+                                <th>Attempted</th>
+                                <th>Correct</th>
+                                <th>Accuracy</th>
+                                <th>Performance</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for topic in topic_analysis %}
+
+                                <tr>
+
+                                    <td>{{ topic.concept }}</td>
+
+                                    <td>{{ topic.attempted }}</td>
+
+                                    <td>{{ topic.correct }}</td>
+
+                                    <td>
+                                        {{ topic.accuracy|round(1) }}%
+                                    </td>
+
+                                    <td>
+                                        <progress
+                                            class="topic-progress-bar"
+                                            max="100"
+                                            value="{{ topic.accuracy|float }}">
+                                        </progress>
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="topic-empty">
+                    <h3>Topic analysis is not available yet</h3>
+
+                    <p>
+                        Complete assessments containing topic-tagged
+                        questions to see your performance here.
+                    </p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            EduPluse · Learn. Analyse. Improve.
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

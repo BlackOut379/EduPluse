@@ -1,0 +1,567 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessments | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">TEACHER MENU</p>
+
+        <a href="{{ url_for('teacher_dashboard') }}" class="nav-link active">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('teacher_subjects') }}" class="nav-link">
+            My Subjects & Syllabus
+        </a>
+
+        <a href="{{ url_for('teacher_attendance') }}" class="nav-link">
+            Attendance Management
+        </a>
+
+        <a href="{{ url_for('teacher_marks') }}" class="nav-link">
+            Internal Marks
+        </a>
+
+        <a href="{{ url_for('teacher_materials') }}" class="nav-link">
+            Learning Materials
+        </a>
+
+        <a href="{{ url_for('teacher_assessments') }}" class="nav-link">
+            Assessments
+        </a>
+
+        <a href="{{ url_for('teacher_class_analysis') }}" class="nav-link">
+            Class Analysis
+        </a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <main class="dashboard-main assessment-page">
+
+        <header class="dashboard-header">
+            <div>
+                <p class="welcome-label">TEACHER WORKSPACE</p>
+                <h1>Assessment Studio</h1>
+                <p class="dashboard-subtitle">
+                    Generate, review and publish assessments.
+                </p>
+            </div>
+
+            <div class="profile-avatar">
+                {{ name[0].upper() }}
+            </div>
+        </header>
+
+
+        {% if message %}
+            <div class="message">{{ message }}</div>
+        {% endif %}
+
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+
+        <!-- CREATE ASSESSMENT -->
+
+        <section class="section-card">
+
+            <p class="eyebrow">CREATE</p>
+
+            <div class="section-heading">
+                <h2>Generate Question Set</h2>
+            </div>
+
+            <p class="section-description">
+                Select learning materials. EduPluse will generate
+                30 MCQs based on their content.
+            </p>
+
+            {% if materials %}
+
+                <form method="POST"
+                      action="{{ url_for('teacher_assessments') }}">
+
+                    <div class="field">
+
+                        <label for="material_ids">
+                            Learning Materials
+                        </label>
+
+                        <select id="material_ids"
+                                name="material_ids"
+                                multiple
+                                required
+                                size="5">
+
+                            {% for material in materials %}
+                                <option value="{{ material.id }}">
+                                    {{ material.title }} -
+                                    {{ material.created_at }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <p class="hint">
+                            Select multiple materials using Ctrl + Click.
+                            All selected materials must belong to the same
+                            class and subject.
+                        </p>
+
+                    </div>
+
+                    <button type="submit" class="primary-button">
+                        Generate 30 Questions
+                    </button>
+
+                </form>
+
+            {% else %}
+
+                <div class="empty-state">
+                    No learning materials available.
+                    <a href="{{ url_for('teacher_materials') }}">
+                        Upload learning material
+                    </a>
+                    before generating questions.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- QUESTION REVIEW AND DIRECT PUBLISH -->
+
+        {% if review_questions %}
+
+            <section class="section-card">
+
+                <p class="eyebrow">QUESTION REVIEW</p>
+
+                <div class="section-heading">
+                    <h2>Review Generated Questions</h2>
+                </div>
+
+                <p class="section-description">
+                    Review the generated questions and select between
+                    15 and 20. Set the assessment schedule and publish
+                    directly.
+                </p>
+
+                <p class="assessment-meta">
+                    <strong>Source materials:</strong>
+                    {{ selected_material }}
+                </p>
+
+                <form method="POST"
+                      id="publishForm"
+                      action="{{ url_for('publish_teacher_assessment', assessment_id=draft_assessment_id) }}">
+
+                    <div class="field">
+
+                        <label for="title">Assessment Title</label>
+
+                        <input type="text"
+                               id="title"
+                               name="title"
+                               value="Weekly Assessment"
+                               required>
+
+                    </div>
+
+                    <div class="selection-bar">
+
+                        <span>
+                            Questions selected:
+                            <span class="selection-count" id="selectedCount">0</span>
+                            / 20
+                        </span>
+
+                        <span id="selectionMessage">
+                            Select 15–20 questions
+                        </span>
+
+                    </div>
+
+                    <div class="question-list">
+
+                        {% for question in review_questions %}
+
+                            <article class="question-card">
+
+                                <div class="question-top">
+
+                                    <input type="checkbox"
+                                           name="question_ids"
+                                           value="{{ question.id }}"
+                                           id="question_{{ question.id }}">
+
+                                    <label for="question_{{ question.id }}"
+                                           class="question-text">
+                                        {{ loop.index }}. {{ question.question }}
+                                    </label>
+
+                                </div>
+
+                                <span class="topic-chip">
+                                    {{ question.concept }}
+                                </span>
+
+                                <div class="options-grid">
+
+                                    <div class="option">
+                                        A. {{ question.option_a }}
+                                    </div>
+
+                                    <div class="option">
+                                        B. {{ question.option_b }}
+                                    </div>
+
+                                    <div class="option">
+                                        C. {{ question.option_c }}
+                                    </div>
+
+                                    <div class="option">
+                                        D. {{ question.option_d }}
+                                    </div>
+
+                                </div>
+
+                                <div class="answer-details">
+
+                                    <p>
+                                        <strong>Correct answer:</strong>
+                                        {{ question.correct_answer }}
+                                    </p>
+
+                                    <p>
+                                        <strong>Explanation:</strong>
+                                        {{ question.explanation }}
+                                    </p>
+
+                                </div>
+
+                            </article>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- SCHEDULE -->
+
+                    <div class="schedule-form">
+
+                        <p><strong>Schedule Assessment</strong></p>
+
+                        <div class="schedule-grid">
+
+                            <div class="field">
+
+                                <label for="start_time">
+                                    Start Date & Time
+                                </label>
+
+                                <input type="datetime-local"
+                                       id="start_time"
+                                       name="start_time"
+                                       required>
+
+                            </div>
+
+                            <div class="field">
+
+                                <label for="end_time">
+                                    End Date & Time
+                                </label>
+
+                                <input type="datetime-local"
+                                       id="end_time"
+                                       name="end_time"
+                                       required>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <button type="submit"
+                            class="primary-button"
+                            id="publishButton"
+                            disabled>
+                        Publish Assessment
+                    </button>
+
+                </form>
+
+            </section>
+
+        {% endif %}
+
+
+        <!-- PUBLISHED ASSESSMENTS -->
+
+        <section class="section-card">
+
+            <p class="eyebrow">LIVE</p>
+
+            <div class="section-heading">
+                <h2>Published Assessments</h2>
+            </div>
+
+            <p class="section-description">
+                Assessments that have been scheduled for students.
+            </p>
+
+            {% set published = assessments | selectattr("status", "equalto", "published") | list %}
+
+            {% if published %}
+
+                {% for assessment in published %}
+
+                    <div class="assessment-item">
+
+                        <div class="section-heading">
+
+                            <h3>{{ assessment.title }}</h3>
+
+                            <span class="status published">
+                                Published
+                            </span>
+
+                        </div>
+
+                        <div class="assessment-meta">
+
+                            Class: {{ assessment.class_name }}<br>
+                            Subject: {{ assessment.subject_name }}<br>
+                            Questions: {{ assessment.question_count }}<br>
+                            Starts: {{ assessment.start_time }}<br>
+                            Ends: {{ assessment.end_time }}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty-state">
+                    No published assessments yet.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- WORKFLOW -->
+
+        <section class="section-card">
+
+            <p class="eyebrow">HOW IT WORKS</p>
+
+            <h2>Assessment Workflow</h2>
+
+            <div class="workflow">
+
+                <div class="workflow-step">
+                    <span class="workflow-number">01</span>
+                    <p>Select learning materials</p>
+                </div>
+
+                <div class="workflow-step">
+                    <span class="workflow-number">02</span>
+                    <p>Generate 30 MCQs using AI</p>
+                </div>
+
+                <div class="workflow-step">
+                    <span class="workflow-number">03</span>
+                    <p>Review and select 15–20 questions</p>
+                </div>
+
+                <div class="workflow-step">
+                    <span class="workflow-number">04</span>
+                    <p>Set schedule and publish assessment</p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    // QUESTION SELECTION
+
+    const checkboxes = document.querySelectorAll(
+        'input[name="question_ids"]'
+    );
+
+    const selectedCount = document.getElementById("selectedCount");
+    const selectionMessage = document.getElementById("selectionMessage");
+    const publishButton = document.getElementById("publishButton");
+
+    function updateSelection() {
+
+        if (!selectedCount || !publishButton) return;
+
+        const selected = document.querySelectorAll(
+            'input[name="question_ids"]:checked'
+        ).length;
+
+        selectedCount.textContent = selected;
+
+        if (selected > 20) {
+
+            selectionMessage.textContent =
+                "Maximum 20 questions allowed.";
+
+            publishButton.disabled = true;
+
+        } else if (selected < 15) {
+
+            selectionMessage.textContent =
+                "Select at least " + (15 - selected) + " more.";
+
+            publishButton.disabled = true;
+
+        } else {
+
+            selectionMessage.textContent =
+                "Ready to publish.";
+
+            publishButton.disabled = false;
+
+        }
+
+    }
+
+    checkboxes.forEach(checkbox => {
+
+        checkbox.addEventListener("change", function () {
+
+            const selected = document.querySelectorAll(
+                'input[name="question_ids"]:checked'
+            ).length;
+
+            if (selected > 20) {
+                this.checked = false;
+            }
+
+            updateSelection();
+
+        });
+
+    });
+
+    updateSelection();
+
+
+    // ASSESSMENT SCHEDULING
+
+    const publishForm = document.getElementById("publishForm");
+
+    if (publishForm) {
+
+        const startInput = publishForm.querySelector(
+            'input[name="start_time"]'
+        );
+
+        const endInput = publishForm.querySelector(
+            'input[name="end_time"]'
+        );
+
+        function getLocalDateTime() {
+
+            const now = new Date();
+
+            now.setMinutes(
+                now.getMinutes() - now.getTimezoneOffset()
+            );
+
+            return now.toISOString().slice(0, 16);
+
+        }
+
+        const minimum = getLocalDateTime();
+
+        startInput.min = minimum;
+        endInput.min = minimum;
+
+        startInput.addEventListener("change", function () {
+
+            endInput.min = this.value;
+
+            if (endInput.value && endInput.value <= this.value) {
+                endInput.value = "";
+            }
+
+        });
+
+        publishForm.addEventListener("submit", function (event) {
+
+            if (!startInput.value || !endInput.value) {
+                event.preventDefault();
+                alert("Please select both start and end times.");
+                return;
+            }
+
+            if (startInput.value <= getLocalDateTime()) {
+                event.preventDefault();
+                alert("Start time must be in the future.");
+                return;
+            }
+
+            if (endInput.value <= startInput.value) {
+                event.preventDefault();
+                alert("End time must be after start time.");
+                return;
+            }
+
+            const selected = document.querySelectorAll(
+                'input[name="question_ids"]:checked'
+            ).length;
+
+            if (selected < 15 || selected > 20) {
+                event.preventDefault();
+                alert("Please select between 15 and 20 questions.");
+            }
+
+        });
+
+    }
+
+</script>
+
+</body>
+</html>

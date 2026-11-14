@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture Attendance | EduPluse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">TEACHER MENU</p>
+
+        <a href="{{ url_for('teacher_dashboard') }}" class="nav-link">Dashboard</a>
+        <a href="{{ url_for('teacher_attendance') }}" class="nav-link active">Attendance Management</a>
+        <a href="#" class="nav-link">Internal Marks</a>
+        <a href="#" class="nav-link">Learning Materials</a>
+        <a href="#" class="nav-link">Assessments</a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}" class="nav-link">Logout</a>
+        </div>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <header class="dashboard-header">
+            <div>
+                <p class="welcome-label">LECTURE ATTENDANCE</p>
+                <h1>{{ session_info.class_name }}</h1>
+                <p class="dashboard-subtitle">
+                    {{ session_info.subject_name }}
+                </p>
+            </div>
+        </header>
+
+        <section class="dashboard-panel">
+
+            <div class="panel-heading">
+                <h2>Student Attendance</h2>
+
+                <a
+                    href="{{ url_for(
+                        'teacher_attendance_history',
+                        class_id=session_info.class_id,
+                        subject_id=session_info.subject_id
+                    ) }}"
+                    class="attendance-select-btn">
+                    Back to History
+                </a>
+            </div>
+
+            <p>
+                Date: {{ session_info.lecture_date }}
+            </p>
+
+            <p>
+                Timetable Lecture: {{ session_info.lecture_number }}
+            </p>
+
+            {% if students %}
+
+            <div class="attendance-student-list">
+
+                {% for student in students %}
+
+                <div class="attendance-student-card">
+
+                    <div>
+                        <h3>{{ student.name }}</h3>
+                        <p>{{ student.email }}</p>
+                    </div>
+
+                    <div class="attendance-options">
+
+                        {% if student.status == 'Present' %}
+                            <span class="attendance-present">Present</span>
+                        {% else %}
+                            <span class="attendance-absent">Absent</span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <p>No student attendance records found.</p>
+
+            {% endif %}
+
+        </section>
+
+        <footer class="dashboard-footer">
+            EduPluse | Academic Monitoring System
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ role }} Login | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <main class="login-page">
+
+        <section class="login-brand">
+            <div class="logo">Edu<span>Pluse</span></div>
+
+            <h1>
+                Understand progress.<br>
+                <span>Unlock potential.</span>
+            </h1>
+
+            <p>
+                An intelligent academic platform designed to
+                connect learning, performance, and meaningful insights.
+            </p>
+        </section>
+
+        <section class="login-form-area">
+
+            <div class="login-card">
+
+                <div class="tag">{{ role.upper() }} PORTAL</div>
+
+                <h2>Welcome back.</h2>
+
+                <p class="login-subtitle">
+                    Sign in to continue to your EduPluse workspace.
+                </p>
+
+                <form method="POST">
+
+                    <label for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                    <button type="submit">Sign In →</button>
+                </form>
+
+                <p class="login-note">
+                    New to EduPluse?
+                    <a href="{{ url_for('register') }}">Create an account</a>
+                </p>
+
+                <a href="/" class="back-link">← Back to homepage</a>
+
+                <p class="login-note">
+                    Secure academic access · EduPluse
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

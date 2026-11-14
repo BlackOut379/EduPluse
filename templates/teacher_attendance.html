@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management | EduPluse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">TEACHER MENU</p>
+
+        <a href="{{ url_for('teacher_dashboard') }}"
+           class="nav-link active">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('teacher_subjects') }}"
+           class="nav-link">
+            My Subjects & Syllabus
+        </a>
+
+        <a href="{{ url_for('teacher_attendance') }}"
+           class="nav-link">
+            Attendance Management
+        </a>
+
+        <a href="{{ url_for('teacher_marks') }}"
+           class="nav-link">
+            Internal Marks
+        </a>
+
+        <a href="{{ url_for('teacher_materials') }}"
+           class="nav-link">
+            Learning Materials
+        </a>
+
+        <a href="{{ url_for('teacher_assessments') }}"
+           class="nav-link">
+            Assessments
+        </a>
+
+        <a href="{{ url_for('teacher_class_analysis') }}"
+           class="nav-link">
+            Class Analysis
+        </a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}"
+               class="nav-link">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+    <main class="dashboard-main">
+
+        <header class="dashboard-header">
+            <div>
+                <p class="welcome-label">ATTENDANCE MANAGEMENT</p>
+                <h1>Manage Attendance</h1>
+                <p class="dashboard-subtitle">
+                    Select a class and subject to manage lecture attendance.
+                </p>
+            </div>
+        </header>
+
+        {% if selected_assignment %}
+
+        <section class="dashboard-panel">
+
+            {% if request.args.get('saved') == '1' %}
+            <div class="attendance-success-message">
+                    Attendance saved successfully!
+            </div>
+            {% endif %}
+
+            <div class="panel-heading">
+                <div>
+                    <h2>{{ selected_assignment.class_name }}</h2>
+                    <p>{{ selected_assignment.subject_name }}</p>
+                </div>
+
+                <div>
+                    <a
+                        href="{{ url_for(
+                            'teacher_attendance_history',
+                            class_id=selected_assignment.class_id,
+                            subject_id=selected_assignment.subject_id
+                        ) }}"
+                        class="attendance-select-btn">
+                        View History
+                    </a>
+
+                    <a href="{{ url_for('teacher_attendance') }}" class="attendance-select-btn">
+                        Back to Classes
+                    </a>
+                </div>
+            </div>
+
+            {% if students %}
+
+            <form action="{{ url_for('save_attendance') }}" method="POST">
+
+                <input type="hidden" name="class_id"
+                       value="{{ selected_assignment.class_id }}">
+
+                <input type="hidden" name="subject_id"
+                       value="{{ selected_assignment.subject_id }}">
+
+                <div class="attendance-session-details">
+
+                    <h3>Lecture Details</h3>
+
+                    <p>Select the date and timetable lecture number.</p>
+
+                    <div class="attendance-class-list">
+
+                        <div class="attendance-class-card">
+
+                            <div>
+                                <label for="lecture-date">Lecture Date</label>
+                                <input
+                                    type="date"
+                                    id="lecture-date"
+                                    name="lecture_date"
+                                    required
+                                >
+                            </div>
+
+                            <div>
+                                <label for="lecture-number">
+                                    Timetable Lecture Number
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="lecture-number"
+                                    name="lecture_number"
+                                    min="1"
+                                    max="20"
+                                    value="1"
+                                    required
+                                >
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="panel-heading">
+                    <h2>Mark Student Attendance</h2>
+                    <p>Total Students: {{ students|length }}</p>
+                </div>
+
+                <div class="attendance-student-list">
+
+                    {% for student in students %}
+
+                    <div class="attendance-student-card">
+
+                        <div>
+                            <h3>{{ student.name }}</h3>
+                            <p>{{ student.email }}</p>
+                        </div>
+
+                        <div class="attendance-options">
+
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="student_{{ student.id }}"
+                                    value="Present"
+                                    required
+                                >
+                                Present
+                            </label>
+
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="student_{{ student.id }}"
+                                    value="Absent"
+                                    required
+                                >
+                                Absent
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <button type="submit" class="attendance-select-btn">
+                    Save Attendance
+                </button>
+
+            </form>
+
+            {% else %}
+
+            <div class="empty-state">
+                <h3>No students enrolled</h3>
+                <p>Students enrolled in this class will appear here.</p>
+            </div>
+
+            {% endif %}
+
+        </section>
+
+        {% else %}
+
+        <section class="dashboard-panel">
+
+            <div class="panel-heading">
+                <h2>Your Assigned Classes</h2>
+            </div>
+
+            {% if assignments %}
+
+            <div class="attendance-class-list">
+
+                {% for assignment in assignments %}
+
+                <div class="attendance-class-card">
+
+                    <div>
+                        <h3>{{ assignment.class_name }}</h3>
+                        <p>{{ assignment.subject_name }}</p>
+                    </div>
+
+                    <a
+                        href="{{ url_for('teacher_attendance') }}?class_id={{ assignment.class_id }}&subject_id={{ assignment.subject_id }}"
+                        class="attendance-select-btn">
+                        Select Class
+                    </a>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <div class="empty-state">
+                <h3>No classes assigned yet</h3>
+                <p>Your assigned classes and subjects will appear here.</p>
+            </div>
+
+            {% endif %}
+
+        </section>
+
+        {% endif %}
+
+        <footer class="dashboard-footer">
+            EduPluse | Academic Monitoring System
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

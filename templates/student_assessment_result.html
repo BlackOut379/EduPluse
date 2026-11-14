@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Result | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .result-container {
+            max-width: 700px;
+            margin: 60px auto;
+            padding: 24px;
+        }
+
+        .result-card {
+            background: var(--surface, #111a2b);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 35px;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 25px 0;
+            color: var(--accent, #8275ff);
+        }
+
+        .result-message {
+            color: var(--muted, #9aa8bf);
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 22px;
+            border-radius: 9px;
+            background: var(--accent, #8275ff);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+<div class="result-container">
+
+    <div class="result-card">
+
+        <h1>{{ assessment.title }}</h1>
+
+        {% if already_submitted %}
+            <p class="result-message">
+                You have already submitted this assessment.
+            </p>
+        {% else %}
+            <p class="result-message">
+                Your assessment has been submitted successfully.
+            </p>
+        {% endif %}
+
+        <div class="score">
+            {{ attempt.score }}
+        </div>
+
+        <p>Correct answers out of the total questions.</p>
+
+        <a href="{{ url_for('student_dashboard') }}"
+           class="back-button">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

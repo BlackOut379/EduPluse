@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ assessment.title }} | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .assessment-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 24px;
+        }
+
+        .assessment-header,
+        .question-card {
+            background: var(--surface, #111a2b);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .question-card h3 {
+            margin: 0 0 18px;
+            line-height: 1.5;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px;
+            margin: 10px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        .option:hover {
+            border-color: var(--accent, #8275ff);
+        }
+
+        .option input {
+            accent-color: var(--accent, #8275ff);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 9px;
+            background: var(--accent, #8275ff);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            opacity: 0.9;
+        }
+
+        .question-number {
+            color: var(--muted, #9aa8bf);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+<div class="assessment-container">
+
+    <div class="assessment-header">
+        <h1>{{ assessment.title }}</h1>
+        <p>{{ assessment.subject_name }}</p>
+        <p>Answer all questions before submitting.</p>
+    </div>
+
+    <form method="POST">
+
+        {% for question in questions %}
+        <div class="question-card">
+
+            <div class="question-number">
+                Question {{ loop.index }} of {{ questions|length }}
+            </div>
+
+            <h3>{{ question.question }}</h3>
+
+            <label class="option">
+                <input type="radio"
+                       name="question_{{ question.id }}"
+                       value="A"
+                       required>
+                <span>{{ question.option_a }}</span>
+            </label>
+
+            <label class="option">
+                <input type="radio"
+                       name="question_{{ question.id }}"
+                       value="B"
+                       required>
+                <span>{{ question.option_b }}</span>
+            </label>
+
+            <label class="option">
+                <input type="radio"
+                       name="question_{{ question.id }}"
+                       value="C"
+                       required>
+                <span>{{ question.option_c }}</span>
+            </label>
+
+            <label class="option">
+                <input type="radio"
+                       name="question_{{ question.id }}"
+                       value="D"
+                       required>
+                <span>{{ question.option_d }}</span>
+            </label>
+
+        </div>
+        {% endfor %}
+
+        <button type="submit"
+                class="submit-button"
+                onclick="return confirm('Are you sure you want to submit this assessment? You cannot attempt it again.')">
+            Submit Assessment
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

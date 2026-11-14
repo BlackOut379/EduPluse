@@ -1,0 +1,756 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Subjects | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .subjects-dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            min-width: 0;
+            color: #0f172a;
+        }
+
+        .subjects-dashboard * {
+            box-sizing: border-box;
+        }
+
+        .subjects-dashboard .dashboard-intro {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 7px;
+        }
+
+        .subjects-dashboard .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .subjects-dashboard .section-heading h2 {
+            margin: 0;
+            font-size: 19px;
+            color: #0f172a;
+        }
+
+        .subjects-dashboard .section-heading p {
+            color: #64748b;
+            font-size: 12px;
+            margin: 5px 0 0;
+        }
+
+        .subjects-dashboard .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .subjects-dashboard .subject-card,
+        .subjects-dashboard .content-panel,
+        .subjects-dashboard .info-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+        }
+
+        .subjects-dashboard .subject-card {
+            padding: 20px;
+            min-width: 0;
+        }
+
+        .subjects-dashboard .subject-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subjects-dashboard .subject-icon {
+            width: 39px;
+            height: 39px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eef2ff;
+            color: #4f46e5;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .subjects-dashboard .subject-status {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .subjects-dashboard .subject-card h3 {
+            margin: 16px 0 6px;
+            font-size: 16px;
+            color: #0f172a;
+        }
+
+        .subjects-dashboard .subject-meta {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 17px;
+        }
+
+        .subjects-dashboard .subject-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 14px 0;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .subjects-dashboard .stat-label {
+            color: #64748b;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .subjects-dashboard .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .subjects-dashboard .section-link {
+            color: #4f46e5;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .subjects-dashboard .section-link:hover {
+            color: #3730a3;
+            text-decoration: underline;
+        }
+
+        .subjects-dashboard .subject-action {
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .subjects-dashboard .content-panel {
+            padding: 22px;
+        }
+
+        .subjects-dashboard .content-panel h2 {
+            font-size: 18px;
+            color: #0f172a;
+            margin: 0 0 7px;
+        }
+
+        .subjects-dashboard .panel-description {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0 0 20px;
+            line-height: 1.7;
+        }
+
+        .subjects-dashboard .upload-area {
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+            border-radius: 11px;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .subjects-dashboard .upload-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .subjects-dashboard .upload-area h3 {
+            color: #0f172a;
+            font-size: 15px;
+            margin: 0 0 7px;
+        }
+
+        .subjects-dashboard .upload-area > p {
+            color: #64748b;
+            font-size: 12px;
+            margin: 0 0 20px;
+        }
+
+        .subjects-dashboard .upload-fields {
+            max-width: 460px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .subjects-dashboard .upload-fields label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .subjects-dashboard .upload-fields input,
+        .subjects-dashboard .upload-fields select {
+            width: 100%;
+            padding: 11px;
+            margin-bottom: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 13px;
+            background: #ffffff;
+            color: #334155;
+        }
+
+        .subjects-dashboard .upload-fields input:focus,
+        .subjects-dashboard .upload-fields select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .subjects-dashboard .upload-button {
+            display: inline-block;
+            background: #4f46e5;
+            color: white;
+            padding: 11px 19px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .subjects-dashboard .upload-button:hover {
+            background: #3730a3;
+        }
+
+        .subjects-dashboard .upload-note {
+            margin-top: 14px;
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .subjects-dashboard .syllabus-list {
+            margin-top: 25px;
+        }
+
+        .subjects-dashboard .syllabus-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .subjects-dashboard .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .subjects-dashboard .file-icon {
+            width: 39px;
+            height: 39px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eef2ff;
+            color: #4f46e5;
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .subjects-dashboard .file-details {
+            min-width: 0;
+        }
+
+        .subjects-dashboard .file-details h4 {
+            color: #0f172a;
+            font-size: 13px;
+            margin: 0 0 5px;
+            overflow-wrap: anywhere;
+        }
+
+        .subjects-dashboard .file-details p {
+            color: #64748b;
+            font-size: 11px;
+            margin: 0 0 4px;
+            overflow-wrap: anywhere;
+        }
+
+        .subjects-dashboard .file-action {
+            flex-shrink: 0;
+            color: #4f46e5;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 12px;
+            border: 1px solid #c7d2fe;
+            border-radius: 7px;
+        }
+
+        .subjects-dashboard .file-action:hover {
+            background: #eef2ff;
+            color: #3730a3;
+        }
+
+        .subjects-dashboard .empty-state {
+            padding: 25px 15px;
+            text-align: center;
+            background: #ffffff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 11px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .subjects-dashboard .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .subjects-dashboard .info-card {
+            padding: 18px;
+        }
+
+        .subjects-dashboard .info-card h3 {
+            color: #4f46e5;
+            font-size: 13px;
+            margin: 0 0 8px;
+        }
+
+        .subjects-dashboard .info-card p {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .subjects-dashboard .dashboard-footer {
+            padding: 17px 0 5px;
+            color: #94a3b8;
+            font-size: 11px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 850px) {
+            .subjects-dashboard .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .subjects-dashboard .content-panel {
+                padding: 16px;
+            }
+
+            .subjects-dashboard .section-heading h2 {
+                font-size: 17px;
+            }
+
+            .subjects-dashboard .upload-area {
+                padding: 20px 12px;
+            }
+
+            .subjects-dashboard .syllabus-item {
+                align-items: flex-start;
+            }
+
+            .subjects-dashboard .file-action {
+                padding: 7px 9px;
+            }
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">TEACHER MENU</p>
+
+        <a href="{{ url_for('teacher_dashboard') }}"
+           class="nav-link">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('teacher_subjects') }}"
+           class="nav-link active">
+            My Subjects & Syllabus
+        </a>
+
+        <a href="{{ url_for('teacher_attendance') }}"
+           class="nav-link">
+            Attendance Management
+        </a>
+
+        <a href="{{ url_for('teacher_marks') }}"
+           class="nav-link">
+            Internal Marks
+        </a>
+
+        <a href="{{ url_for('teacher_materials') }}"
+           class="nav-link">
+            Learning Materials
+        </a>
+
+        <a href="{{ url_for('teacher_assessments') }}"
+           class="nav-link">
+            Assessments
+        </a>
+
+        <a href="{{ url_for('teacher_class_analysis') }}"
+           class="nav-link">
+            Class Analysis
+        </a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}"
+               class="nav-link">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main subjects-dashboard">
+
+        <!-- HEADER -->
+        <header class="dashboard-header">
+
+            <div>
+                <p class="welcome-label">TEACHER WORKSPACE</p>
+
+                <h1>My Subjects</h1>
+
+                <p class="dashboard-intro">
+                    Manage your assigned subjects and organise
+                    syllabus documents for students.
+                </p>
+            </div>
+
+            <div class="profile-avatar">
+                {{ name[0].upper() if name else 'T' }}
+            </div>
+
+        </header>
+
+        <!-- ASSIGNED SUBJECTS -->
+        <section>
+
+            <div class="section-heading">
+                <div>
+                    <h2>Assigned Subjects</h2>
+                    <p>Subjects and classes assigned to you.</p>
+                </div>
+            </div>
+
+            <div class="subject-grid">
+
+                {% if subjects %}
+
+                    {% for subject in subjects %}
+
+                    <article class="subject-card">
+
+                        <div class="subject-top">
+                            <div class="subject-icon">S</div>
+                            <span class="subject-status">Assigned</span>
+                        </div>
+
+                        <h3>{{ subject.subject_name }}</h3>
+
+                        <div class="subject-meta">
+                            Class: {{ subject.class_name }}
+                        </div>
+
+                        <div class="subject-stats">
+
+                            <div>
+                                <div class="stat-label">Syllabus</div>
+                                <div class="stat-value">
+                                    {{ subject.syllabus_count|default(0) }}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="stat-label">Learning Materials</div>
+                                <div class="stat-value">
+                                    {{ subject.material_count|default(0) }}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <a href="#syllabus" class="section-link subject-action">
+                            Manage Syllabus →
+                        </a>
+
+                    </article>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-state">
+                        No assigned subjects are available yet.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        <!-- SYLLABUS MANAGEMENT -->
+        <section class="content-panel" id="syllabus">
+
+            <h2>Subject-wise Syllabus Management</h2>
+
+            <p class="panel-description">
+                Upload the official syllabus for your assigned subjects.
+                Students can access these documents through their
+                respective subject pages.
+            </p>
+
+            <form action="{{ url_for('upload_teacher_syllabus') }}"
+                  method="POST"
+                  enctype="multipart/form-data"
+                  class="upload-area"
+                  id="syllabus-upload-form">
+
+                <div class="upload-icon">📚</div>
+
+                <h3>Upload Subject Syllabus</h3>
+
+                <p>
+                    Select an assigned class and subject, then upload
+                    its syllabus document.
+                </p>
+
+                <div class="upload-fields">
+
+                    <label for="syllabus-title">
+                        Syllabus Title
+                    </label>
+
+                    <input type="text"
+                           id="syllabus-title"
+                           name="title"
+                           placeholder="e.g. Python Programming Syllabus"
+                           required>
+
+                    <label for="syllabus-assignment">
+                        Select Class and Subject
+                    </label>
+
+                    <select id="syllabus-assignment" required>
+
+                        <option value="">Select Assigned Subject</option>
+
+                        {% for subject in subjects %}
+                            <option value="{{ subject.class_id }}|{{ subject.subject_id }}">
+                                {{ subject.class_name }} — {{ subject.subject_name }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+
+                    <input type="hidden"
+                           name="class_id"
+                           id="syllabus-class-id">
+
+                    <input type="hidden"
+                           name="subject_id"
+                           id="syllabus-subject-id">
+
+                    <label for="syllabus-file">
+                        Syllabus Document
+                    </label>
+
+                    <input type="file"
+                           id="syllabus-file"
+                           name="syllabus_file"
+                           accept=".pdf,.docx,.pptx,.txt"
+                           required>
+
+                    <button type="submit" class="upload-button">
+                        Upload Syllabus
+                    </button>
+
+                </div>
+
+                <div class="upload-note">
+                    Supported formats: PDF, DOCX, PPTX and TXT.
+                    Maximum file size: 20 MB.
+                </div>
+
+            </form>
+
+            <!-- UPLOADED SYLLABUS -->
+            <div class="syllabus-list">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Uploaded Syllabus</h2>
+                        <p>Official syllabus documents for your subjects.</p>
+                    </div>
+                </div>
+
+                {% if syllabus_files %}
+
+                    {% for syllabus in syllabus_files %}
+
+                    <div class="syllabus-item">
+
+                        <div class="file-info">
+
+                            <div class="file-icon">
+                                FILE
+                            </div>
+
+                            <div class="file-details">
+
+                                <h4>{{ syllabus.title }}</h4>
+
+                                <p>
+                                    {{ syllabus.class_name }} —
+                                    {{ syllabus.subject_name }}
+                                </p>
+
+                                <p>
+                                    {{ syllabus.file_name }} ·
+                                    {{ syllabus.uploaded_at }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <a href="{{ url_for(
+                                'download_teacher_syllabus',
+                                syllabus_id=syllabus.id
+                            ) }}"
+                           class="file-action">
+                            Download
+                        </a>
+
+                    </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-state">
+                        No syllabus documents uploaded yet.
+                        Uploaded documents will appear here.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        <!-- INFORMATION -->
+        <section>
+
+            <div class="section-heading">
+                <div>
+                    <h2>How Syllabus Management Works</h2>
+                    <p>Keep subject content organised for students.</p>
+                </div>
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-card">
+                    <h3>01. Upload</h3>
+                    <p>
+                        Upload the official syllabus document for each
+                        assigned subject.
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <h3>02. Organise</h3>
+                    <p>
+                        Keep syllabus documents separate from weekly
+                        teaching materials and assessments.
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <h3>03. Student Access</h3>
+                    <p>
+                        Students can refer to the syllabus from their
+                        subject page once it is published.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <footer class="dashboard-footer">
+            EduPluse · Learn. Analyse. Improve.
+        </footer>
+
+    </main>
+
+</div>
+
+<script>
+    document.getElementById("syllabus-upload-form").addEventListener("submit", function(event) {
+
+        const assignment = document.getElementById("syllabus-assignment").value;
+
+        if (!assignment) {
+            event.preventDefault();
+            alert("Please select a class and subject.");
+            return;
+        }
+
+        const ids = assignment.split("|");
+
+        if (ids.length !== 2 || !ids[0] || !ids[1]) {
+            event.preventDefault();
+            alert("Invalid class and subject selection.");
+            return;
+        }
+
+        document.getElementById("syllabus-class-id").value = ids[0];
+        document.getElementById("syllabus-subject-id").value = ids[1];
+
+    });
+</script>
+
+</body>
+</html>

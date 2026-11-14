@@ -1,0 +1,645 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Teacher Dashboard | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .teacher-dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            min-width: 0;
+            color: #0f172a;
+        }
+
+        .teacher-dashboard * {
+            box-sizing: border-box;
+        }
+
+        .teacher-dashboard .dashboard-intro {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 7px;
+        }
+
+        .teacher-dashboard .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .teacher-dashboard .section-heading h2 {
+            margin: 0;
+            font-size: 19px;
+            color: #0f172a;
+        }
+
+        .teacher-dashboard .section-heading p {
+            color: #64748b;
+            font-size: 12px;
+            margin: 5px 0 0;
+        }
+
+        .teacher-dashboard .section-link {
+            color: #4f46e5;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .teacher-dashboard .section-link:hover {
+            color: #3730a3;
+            text-decoration: underline;
+        }
+
+        .teacher-dashboard .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+            margin: 0;
+        }
+
+        .teacher-dashboard .stat-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 19px;
+            min-width: 0;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+        }
+
+        .teacher-dashboard .stat-card p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .teacher-dashboard .stat-card h2 {
+            margin: 10px 0 5px;
+            color: #0f172a;
+            font-size: 27px;
+        }
+
+        .teacher-dashboard .stat-card span {
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        .teacher-dashboard .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .teacher-dashboard .feature-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 0;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+        }
+
+        .teacher-dashboard .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin-bottom: 14px;
+        }
+
+        .teacher-dashboard .feature-icon {
+            width: 39px;
+            height: 39px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eef2ff;
+            color: #4f46e5;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+
+        .teacher-dashboard .feature-header h3 {
+            color: #0f172a;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .teacher-dashboard .feature-card > p {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.7;
+            margin: 0 0 15px;
+        }
+
+        .teacher-dashboard .feature-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .teacher-dashboard .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+
+        .teacher-dashboard .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            padding: 15px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 11px;
+            min-width: 0;
+        }
+
+        .teacher-dashboard .activity-details {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .teacher-dashboard .activity-details h3 {
+            margin: 0 0 5px;
+            font-size: 13px;
+            color: #0f172a;
+        }
+
+        .teacher-dashboard .activity-details p {
+            margin: 0;
+            color: #64748b;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .teacher-dashboard .empty-state {
+            padding: 25px 15px;
+            text-align: center;
+            background: #ffffff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+        }
+
+        .teacher-dashboard .empty-state h3 {
+            font-size: 14px;
+            color: #334155;
+            margin: 0 0 6px;
+        }
+
+        .teacher-dashboard .empty-state p {
+            color: #64748b;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .teacher-dashboard .dashboard-footer {
+            padding: 17px 0 5px;
+            color: #94a3b8;
+            font-size: 11px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 1000px) {
+            .teacher-dashboard .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .teacher-dashboard .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .teacher-dashboard .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .teacher-dashboard .section-heading h2 {
+                font-size: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">TEACHER MENU</p>
+
+        <a href="{{ url_for('teacher_dashboard') }}"
+           class="nav-link active">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('teacher_subjects') }}"
+           class="nav-link">
+            My Subjects & Syllabus
+        </a>
+
+        <a href="{{ url_for('teacher_attendance') }}"
+           class="nav-link">
+            Attendance Management
+        </a>
+
+        <a href="{{ url_for('teacher_marks') }}"
+           class="nav-link">
+            Internal Marks
+        </a>
+
+        <a href="{{ url_for('teacher_materials') }}"
+           class="nav-link">
+            Learning Materials
+        </a>
+
+        <a href="{{ url_for('teacher_assessments') }}"
+           class="nav-link">
+            Assessments
+        </a>
+
+        <a href="{{ url_for('teacher_class_analysis') }}"
+           class="nav-link">
+            Class Analysis
+        </a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}"
+               class="nav-link">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="dashboard-main teacher-dashboard">
+
+        <!-- Welcome Header -->
+        <header class="dashboard-header">
+
+            <div>
+                <p class="welcome-label">TEACHER WORKSPACE</p>
+
+                <h1>Welcome, {{ name }}.</h1>
+
+                <p class="dashboard-intro">
+                    Manage your subjects, monitor student progress
+                    and support better learning outcomes.
+                </p>
+            </div>
+
+            <div class="profile-avatar">
+                {{ name[0].upper() if name else 'T' }}
+            </div>
+
+        </header>
+
+
+        <!-- Overview Statistics -->
+        <section>
+
+            <div class="section-heading">
+                <div>
+                    <h2>Overview</h2>
+                    <p>Your teaching workspace at a glance</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <p>My Classes</p>
+                    <h2>{{ total_classes if total_classes is defined else '--' }}</h2>
+                    <span>Assigned classes</span>
+                </div>
+
+                <div class="stat-card">
+                    <p>My Subjects</p>
+                    <h2>{{ total_subjects if total_subjects is defined else '--' }}</h2>
+                    <span>Assigned subjects</span>
+                </div>
+
+                <div class="stat-card">
+                    <p>Total Students</p>
+                    <h2>{{ total_students if total_students is defined else '--' }}</h2>
+                    <span>Across assigned classes</span>
+                </div>
+
+                <div class="stat-card">
+                    <p>Active Assessments</p>
+                    <h2>{{ active_assessments if active_assessments is defined else '--' }}</h2>
+                    <span>Published assessments</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Teaching Management -->
+        <section>
+
+            <div class="section-heading">
+                <div>
+                    <h2>Teaching Management</h2>
+                    <p>Manage your academic activities</p>
+                </div>
+            </div>
+
+            <div class="feature-grid">
+
+                <!-- Subjects and Syllabus -->
+                <div class="feature-card">
+
+                    <div class="feature-header">
+                        <div class="feature-icon">&#128218;</div>
+                        <h3>Subjects & Syllabus</h3>
+                    </div>
+
+                    <p>
+                        View assigned subjects, organize syllabus
+                        by units and topics, and upload or update
+                        subject-wise syllabus documents.
+                    </p>
+
+                    <div class="feature-actions">
+                        <a href="{{ url_for('teacher_subjects') }}"
+                           class="section-link">
+                            Manage subjects & syllabus →
+                        </a>
+                    </div>
+
+                </div>
+
+
+                <!-- Attendance -->
+                <div class="feature-card">
+
+                    <div class="feature-header">
+                        <div class="feature-icon">&#128197;</div>
+                        <h3>Attendance Management</h3>
+                    </div>
+
+                    <p>
+                        Record student attendance, review previous
+                        sessions and monitor attendance percentages
+                        across your assigned classes.
+                    </p>
+
+                    <div class="feature-actions">
+                        <a href="{{ url_for('teacher_attendance') }}"
+                           class="section-link">
+                            Manage attendance →
+                        </a>
+
+                        <a href="{{ url_for('teacher_attendance_history') }}"
+                           class="section-link">
+                            View history →
+                        </a>
+                    </div>
+
+                </div>
+
+
+                <!-- Internal Marks -->
+                <div class="feature-card">
+
+                    <div class="feature-header">
+                        <div class="feature-icon">&#128221;</div>
+                        <h3>Internal Marks</h3>
+                    </div>
+
+                    <p>
+                        Enter and update student marks, maintain
+                        academic records and review subject-wise
+                        assessment performance.
+                    </p>
+
+                    <div class="feature-actions">
+                        <a href="{{ url_for('teacher_marks') }}"
+                           class="section-link">
+                            Manage internal marks →
+                        </a>
+                    </div>
+
+                </div>
+
+
+                <!-- Learning Materials -->
+                <div class="feature-card">
+
+                    <div class="feature-header">
+                        <div class="feature-icon">&#128196;</div>
+                        <h3>Learning Materials</h3>
+                    </div>
+
+                    <p>
+                        Upload weekly teaching materials in PDF,
+                        PPTX, DOCX or TXT format. Use uploaded
+                        content to generate topic-based assessments.
+                    </p>
+
+                    <div class="feature-actions">
+                        <a href="{{ url_for('teacher_materials') }}"
+                           class="section-link">
+                            Manage learning materials →
+                        </a>
+                    </div>
+
+                </div>
+
+
+                <!-- Assessments -->
+                <div class="feature-card">
+
+                    <div class="feature-header">
+                        <div class="feature-icon">&#128203;</div>
+                        <h3>Assessments</h3>
+                    </div>
+
+                    <p>
+                        Generate MCQ questions from teaching
+                        materials, review questions, save drafts
+                        and publish assessments for students.
+                    </p>
+
+                    <div class="feature-actions">
+                        <a href="{{ url_for('teacher_assessments') }}"
+                           class="section-link">
+                            Manage assessments →
+                        </a>
+                    </div>
+
+                </div>
+
+
+                <!-- Class Analysis -->
+                <div class="feature-card">
+
+                    <div class="feature-header">
+                        <div class="feature-icon">&#128202;</div>
+                        <h3>Class Analysis</h3>
+                    </div>
+
+                    <p>
+                        Analyze class performance, identify
+                        difficult topics, compare weekly assessment
+                        results and monitor student improvement.
+                    </p>
+
+                    <div class="feature-actions">
+                        <a href="{{ url_for('teacher_class_analysis') }}"
+                           class="section-link">
+                            Explore class analysis →
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Academic Risk Monitoring -->
+        <section>
+
+            <div class="section-heading">
+                <div>
+                    <h2>Academic Risk Monitoring</h2>
+                    <p>Identify students who may need additional academic support</p>
+                </div>
+
+                <a href="{{ url_for('teacher_class_analysis') }}"
+                   class="section-link">
+                    View analysis →
+                </a>
+            </div>
+
+            <div class="feature-card">
+
+                <div class="feature-header">
+                    <div class="feature-icon">&#128269;</div>
+                    <h3>Student Progress Monitoring</h3>
+                </div>
+
+                <p>
+                    Review attendance, internal marks, assignment
+                    scores and weekly assessment performance
+                    to identify students who may need support.
+                    Use the available academic records to guide
+                    additional teaching and revision.
+                </p>
+
+                <div class="feature-actions">
+                    <a href="{{ url_for('teacher_class_analysis') }}"
+                       class="section-link">
+                        Review student performance →
+                    </a>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Quick Access -->
+        <section>
+
+            <div class="section-heading">
+                <div>
+                    <h2>Quick Access</h2>
+                    <p>Frequently used teacher tools</p>
+                </div>
+            </div>
+
+            <div class="activity-list">
+
+                <div class="activity-item">
+                    <div class="feature-icon">&#128218;</div>
+
+                    <div class="activity-details">
+                        <h3>Update subject syllabus</h3>
+                        <p>
+                            Add or update the syllabus available
+                            to students.
+                        </p>
+
+                        <a href="{{ url_for('teacher_subjects') }}"
+                           class="section-link">
+                            Open subjects →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="feature-icon">&#128196;</div>
+
+                    <div class="activity-details">
+                        <h3>Upload weekly material</h3>
+                        <p>
+                            Add new teaching content for your
+                            assigned class and subject.
+                        </p>
+
+                        <a href="{{ url_for('teacher_materials') }}"
+                           class="section-link">
+                            Upload materials →
+                        </a>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="feature-icon">&#128203;</div>
+
+                    <div class="activity-details">
+                        <h3>Create an assessment</h3>
+                        <p>
+                            Generate and publish an MCQ assessment
+                            based on teaching content.
+                        </p>
+
+                        <a href="{{ url_for('teacher_assessments') }}"
+                           class="section-link">
+                            Open assessments →
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            EduPluse · Learn. Analyse. Improve.
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

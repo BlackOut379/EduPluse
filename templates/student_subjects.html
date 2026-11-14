@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Subjects | EduPluse</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .subjects-page {
+            display: flex;
+            flex-direction: column;
+            gap: 26px;
+        }
+
+        .page-description {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 7px;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .subject-card {
+            min-width: 0;
+            padding: 22px;
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            transition: 0.2s;
+        }
+
+        .subject-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .subject-card-top {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 18px;
+        }
+
+        .subject-icon {
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: rgba(130,117,255,0.13);
+            color: var(--accent);
+            border-radius: 12px;
+            font-size: 21px;
+        }
+
+        .subject-card h2 {
+            font-size: 17px;
+            margin: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .subject-label {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .subject-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+            margin-bottom: 17px;
+        }
+
+        .subject-description {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .subject-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .subject-actions a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(130,117,255,0.12);
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .subject-actions a:hover {
+            background: rgba(130,117,255,0.22);
+        }
+
+        .subject-actions .primary-action {
+            background: var(--accent);
+            color: white;
+        }
+
+        .subject-actions .primary-action:hover {
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            padding: 45px 20px;
+            text-align: center;
+            border: 1px dashed rgba(255,255,255,0.12);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .empty-state h2 {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--muted);
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .syllabus-info {
+            padding: 18px 20px;
+            background: rgba(130,117,255,0.07);
+            border: 1px solid rgba(130,117,255,0.15);
+            border-radius: 12px;
+        }
+
+        .syllabus-info h3 {
+            font-size: 14px;
+            margin: 0 0 7px;
+        }
+
+        .syllabus-info p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media(max-width: 700px) {
+            .subjects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">Edu<span>Pluse</span></div>
+
+        <p class="sidebar-label">STUDENT MENU</p>
+
+        <a href="{{ url_for('student_dashboard') }}"
+           class="nav-link active">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('student_subjects') }}"
+           class="nav-link">
+            My Subjects
+        </a>
+
+        <a href="{{ url_for('student_topic_analysis') }}"
+           class="nav-link">
+            Topic-wise Analysis
+        </a>
+
+        <a href="{{ url_for('student_assessments') }}"
+           class="nav-link">
+            Assessments
+        </a>
+
+        <a href="{{ url_for('student_materials') }}"
+           class="nav-link">
+            Learning Materials
+        </a>
+
+        <a href="{{ url_for('student_attendance') }}"
+           class="nav-link">
+            My Attendance
+        </a>
+
+        <a href="{{ url_for('student_marks') }}"
+           class="nav-link">
+            Internal Marks
+        </a>
+
+        <div class="sidebar-bottom">
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                Logout
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main subjects-page">
+
+        <header class="dashboard-header">
+
+            <div>
+                <p class="welcome-label">ACADEMIC WORKSPACE</p>
+                <h1>My Subjects</h1>
+
+                <p class="page-description">
+                    Access your subjects, official syllabus and learning resources.
+                </p>
+            </div>
+
+            <div class="profile-avatar">
+                {{ name[0].upper() if name else 'S' }}
+            </div>
+
+        </header>
+
+
+        <!-- SUBJECTS -->
+        <section>
+
+            <div class="section-heading">
+                <h2>Your Enrolled Subjects</h2>
+
+                <span class="subject-count">
+                    {{ subjects|length }} Subjects
+                </span>
+            </div>
+
+            {% if subjects %}
+
+                <div class="subjects-grid">
+
+                    {% for subject in subjects %}
+
+                        <article class="subject-card">
+
+                            <div class="subject-card-top">
+
+                                <div class="subject-icon">
+                                    📘
+                                </div>
+
+                                <div>
+                                    <h2>{{ subject.name }}</h2>
+
+                                    <p class="subject-label">
+                                        Enrolled Subject
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="subject-divider"></div>
+
+                            <p class="subject-description">
+                                Access the official syllabus, study material
+                                and assessments for {{ subject.name }}.
+                            </p>
+
+                            <div class="subject-actions">
+
+                                <a class="primary-action"
+                                   href="/student/syllabus?subject={{ subject.id }}">
+                                    View Syllabus
+                                </a>
+
+                                <a href="/student/materials?subject={{ subject.id }}">
+                                    Study Materials
+                                </a>
+
+                                <a href="/student/assessments?subject={{ subject.id }}">
+                                    Assessments
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+                    <h2>No Subjects Available</h2>
+
+                    <p>
+                        Your enrolled subjects will appear here once
+                        your enrolment is available.
+                    </p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- SYLLABUS INFORMATION -->
+        <section class="syllabus-info">
+
+            <h3>About Your Subject Syllabus</h3>
+
+            <p>
+                Each subject contains its official syllabus uploaded by
+                your teacher. Use the View Syllabus option to access
+                the subject-wise syllabus and understand the topics
+                covered throughout the semester.
+            </p>
+
+        </section>
+
+
+        <footer class="dashboard-footer">
+            EduPluse · Learn. Analyse. Improve.
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>
